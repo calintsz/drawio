@@ -1,9 +1,153 @@
+24-AUG-2021: 14.9.9
+
+- Updates AWS stencils to latest set
+- Reports curved edges as not fully supported in Lucidchart import
+- Updates ru translations. Thanks to Ash Ed.
+
+18-AUG-2021: 14.9.8
+
+- Fixes preview domain in trello powerup
+- [conf cloud] Undo check name fix to consider 404 error as success
+
+16-AUG-2021: 14.9.7
+
+- Prevents NPE in style format dialog
+- Fixes new attachment download auth errors in Trello power up
+- [conf cloud] Fixes an error when checkName api returns 404 when list of attachments are requested
+
+10-AUG-2021: 14.9.6
+
+- [jira cloud] Adds Metrics publish API to log app load time or failure
+- [conf cloud] Adds Metrics publish API to log app load time or failure
+- Fixes possible NPE in StyleFormatPanel (colorset.title)
+
+06-AUG-2021: 14.9.5
+
+- Adds shift/alt to extract data on copy data button
+- Adds barrier for parallel async custom actions
+- Adds background page support
+- Fixes ignored background image size for image export
+- Adds colorNames and titles for color schemes
+- Adds edit geometry in sketch theme context menu
+- Fixes inconsistent cut and delete actions https://github.com/jgraph/drawio/issues/1978
+- Uses shift+click to paste data with label
+- Adds edit submenu in min and sketch themes
+- Adds popup for additonal color models https://github.com/jgraph/drawio/issues/2150
+- Handles page links in background image dialog
+
+03-AUG-2021: 14.9.4
+
+- Executes actions in sequence, adds animation custom actions https://github.com/jgraph/drawio/issues/1861
+- Fixes update of cell IDs in style actions
+- Adds stopping for custom action sequences
+- Fixes naming for parallel animations
+- [conf cloud] Adds timeout config
+- Updates it translations. Thanks to Vincenzo Reale
+- Fixes cloning for actions, final animation state
+- [jira cloud] Adds back Confluence embed using new API
+- Fixes update of custom actions for copy, duplicate and recursion
+- Hides tooltip if mouse enters link hint
+- Fixes loading SVG from OneDrive https://github.com/jgraph/drawio/issues/2161
+- Adds data extraction to props plugin
+
+28-JUL-2021: 14.9.3
+
+- Fixes pointer events for table cells in sketch theme
+- Adds title and container option for insert table drop down
+- Fixes possible cropping in SVG export https://github.com/jgraph/drawio/issues/1216
+- Fixes e.data.indexOf is not a function in OneDrive client
+- Adds edit tooltip in context menu for sketch mode
+- Adds dash line jump style https://github.com/jgraph/drawio/issues/1852
+- Fixes rough URL parameter, possible missing sidebar preview
+- [conf cloud] Fixes multiple embedded diagrams with the same name editing issue
+- Disables plugins action for plugins=0 https://github.com/jgraph/drawio/issues/2148
+- [conf cloud] Adds a fallback for AP is undefined error
+- Updates it tranlsations. Thanks to Vincenzo Reale
+- Updates el tranlsations. Thanks to Io Papadimitriou
+
+22-JUL-2021: 14.9.2
+
+- [conf cloud] Fixes scroll bars with hidden toolbar
+- [conf cloud] Fixes incorrect height of simple viewer
+- Adds DRAWIO_LIGHTBOX_URL https://github.com/jgraph/drawio/issues/2149
+- Creates draft while saving local file to fix possible data loss
+- Adds support for radial gradients https://github.com/jgraph/drawio/issues/1472
+
+21-JUL-2021: 14.9.1
+
+- [conf cloud] Fixes pending updates of embedded macros
+- Fixes autosize for wrapped text, ignored aspect
+
+16-JUL-2021: 14.9.0
+
+- Adds support for se.diagrams.net domain
+- Fixes clipping in viewer with initial hidden layers https://github.com/jgraph/drawio/issues/DID-2617
+- Adds autoOrigin option https://github.com/jgraph/drawio/issues/DID-2617
+- Updates cs translations. Thanks to Pavel Borecki
+- Updates el tranlsations. Thanks to Io Papadimitriou
+- [conf cloud] Improves viewer load time
+
+12-JUL-2021: 14.8.6
+
+- Disables pointerEvents style for images https://github.com/jgraph/drawio/issues/2121
+- [jira cloud] Disables Confluence embed option due to changes in auth token valdation
+- Improvements to Lucidchart import
+
+07-JUL-2021: 14.8.5
+
+- Fixes XSS attack on GoogleGadgetServlet. Thanks to Alfred Berg for report.
+- Updates to cs translations
+
+02-JUL-2021: 14.8.4
+
+- Fixes drag and drop for edge labels with selected parents
+- [conf cloud] Fixes recent and search in embed diagrams
+
+30-JUN-2021: 14.8.3
+
+- [conf cloud] Fixes save settings with current viewer status
+- Adds function for image export in viewer
+- Fixes possible NPE https://github.com/jgraph/drawio/issues/2115
+
+
+25-JUN-2021: 14.8.2
+
+- [conf cloud] Adds lightbox to simple viewer
+- [conf+jira cloud] Fixes export downloads https://github.com/jgraph/drawio/issues/2107
+- [conf cloud] Updates self import to support data:confluence/id and links
+
+24-JUN-2021: 14.8.1
+
+- Clones existing SVG for outline rendering
+- Fixes possible ignored gesture end in outline
+- Fixes unconnected edges z-index order in vsdx import
+- Fixes line jump handling in vsdx import
+- Improves locking https://github.com/jgraph/drawio/issues/2069
+- Fixes action states and cursors for locked cells
+- Fixes selection in locked layers
+- Updates French translations
+
+17-JUN-2021: 14.8.0
+
+- Adds bringForward and sendBackward actions
+- Fixes GraphViewer toolbar and border hiding in FF
+
+16-JUN-2021: 14.7.10
+
+- [jira cloud] Adds support for uploading zipped format diagrams
+- Fixes ignored locked layers, hover icons, shape picker clipping
+
+15-JUN-2021: 14.7.9
+
+- Adds minimize to shape picker in sketch theme
+- Fixes unicode char to HTML entity on some JVMs from Gliffy
+
 14-JUN-2021: 14.7.8
 
 - [conf cloud] Adds custom templates to sketch macro add template dialog
 - [conf cloud] Fixes minor issues with templates dialog
 - Prevents showing an empty viewer when configured layers are incorrect
-- [conf cloud] Fixes template/new dialog bugs and added no file type option
+- [conf cloud] Fixes template and new dialog bugs and added no file type option
 - [conf cloud] Fixes Link dialog attachment links
 - [conf cloud] Fixes centering with hidden toolbar or simple viewer
 - Adds preview button in templates dialog

@@ -31,7 +31,6 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 	
 	var input = document.createElement('input');
 	input.style.marginBottom = '10px';
-	input.style.width = '216px';
 	
 	// Required for picker to render in IE
 	if (mxClient.IS_IE)
@@ -39,7 +38,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 		input.style.marginTop = '10px';
 		document.body.appendChild(input);
 	}
-	
+
 	var applyFunction = (apply != null) ? apply : this.createApplyFunction();
 	
 	function doApply()
@@ -94,7 +93,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 		return table;
 	};
 	
-	function addPresets(presets, rowLength, defaultColor, addResetOption)
+	var addPresets = mxUtils.bind(this, function(presets, rowLength, defaultColor, addResetOption)
 	{
 		rowLength = (rowLength != null) ? rowLength : 12;
 		var table = document.createElement('table');
@@ -113,7 +112,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 			
 			for (var i = 0; i < rowLength; i++)
 			{
-				(function(clr)
+				(mxUtils.bind(this, function(clr)
 				{
 					var td = document.createElement('td');
 					td.style.border = '1px solid black';
@@ -130,9 +129,15 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 					{
 						td.style.background = 'url(\'' + Dialog.prototype.noColorImage + '\')';
 					}
-					else
+					else if (clr != null)
 					{
 						td.style.backgroundColor = '#' + clr;
+						var name = this.colorNames[clr.toUpperCase()];
+
+						if (name != null)
+						{
+							td.setAttribute('title', name);
+						}
 					}
 					
 					tr.appendChild(td);
@@ -156,7 +161,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 						
 						mxEvent.addListener(td, 'dblclick', doApply);
 					}
-				})(presets[row * rowLength + i]);
+				}))(presets[row * rowLength + i]);
 			}
 			
 			tbody.appendChild(tr);
@@ -187,9 +192,46 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 		center.appendChild(table);
 		
 		return table;
-	};
+	});
 
 	div.appendChild(input);
+
+	if (!mxClient.IS_IE && !mxClient.IS_IE11)
+	{
+		input.style.width = '176px';
+
+		var clrInput = document.createElement('input');
+		clrInput.setAttribute('type', 'color');
+		clrInput.style.visibility = 'hidden';
+		clrInput.style.width = '0px';
+		clrInput.style.border = 'none';
+		clrInput.style.marginLeft = '10px';
+		div.appendChild(clrInput);
+
+		div.appendChild(mxUtils.button('...', function()
+		{
+			// LATER: Check if clrInput is expanded
+			if (document.activeElement == clrInput)
+			{
+				input.focus();
+			}
+			else
+			{
+				clrInput.value = '#' + input.value;
+				clrInput.click();
+			}
+		}));
+
+		mxEvent.addListener(clrInput, 'input', function()
+		{
+			picker.fromString(clrInput.value.substring(1));
+		});
+	}
+	else
+	{
+		input.style.width = '216px';
+	}
+
 	mxUtils.br(div);
 	
 	// Adds recent colors
@@ -273,6 +315,11 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
  * Creates function to apply value
  */
 ColorDialog.prototype.presetColors = ['E6D0DE', 'CDA2BE', 'B5739D', 'E1D5E7', 'C3ABD0', 'A680B8', 'D4E1F5', 'A9C4EB', '7EA6E0', 'D5E8D4', '9AC7BF', '67AB9F', 'D5E8D4', 'B9E0A5', '97D077', 'FFF2CC', 'FFE599', 'FFD966', 'FFF4C3', 'FFCE9F', 'FFB570', 'F8CECC', 'F19C99', 'EA6B66']; 
+
+/**
+ * Creates function to apply value
+ */
+ ColorDialog.prototype.colorNames = {};
 
 /**
  * Creates function to apply value
@@ -1450,7 +1497,7 @@ var EditDataDialog = function(ui, cell)
 		
 		mxEvent.addListener(text, 'dblclick', function(evt)
 		{
-			if (mxEvent.isControlDown(evt) || mxEvent.isMetaDown(evt))
+			if (mxEvent.isShiftDown(evt))
 			{
 				var dlg = new FilenameDialog(ui, id, mxResources.get('apply'), mxUtils.bind(this, function(value)
 				{
@@ -1474,6 +1521,8 @@ var EditDataDialog = function(ui, cell)
 				dlg.init();
 			}
 		});
+
+		text.setAttribute('title', 'Shift+Double Click to Edit ID');
 	}
 	
 	for (var i = 0; i < temp.length; i++)
@@ -1853,7 +1902,6 @@ var OutlineWindow = function(editorUi, x, y, w, h)
 	div.style.position = 'absolute';
 	div.style.width = '100%';
 	div.style.height = '100%';
-	div.style.border = '1px solid whiteSmoke';
 	div.style.overflow = 'hidden';
 
 	this.window = new mxWindow(mxResources.get('outline'), div, x, y, w, h, true, true);
@@ -1897,123 +1945,59 @@ var OutlineWindow = function(editorUi, x, y, w, h)
 		outline.destroy();
 	}
 
-	this.window.addListener(mxEvent.RESIZE, mxUtils.bind(this, function()
-   	{
-		outline.update(false);
-		outline.outline.sizeDidChange();
-   	}));
-	
 	this.window.addListener(mxEvent.SHOW, mxUtils.bind(this, function()
 	{
 		this.window.fit();
-		outline.suspended = false;
-		outline.outline.view.revalidate();
-		outline.update();
+		outline.setSuspended(false);
 	}));
 	
 	this.window.addListener(mxEvent.HIDE, mxUtils.bind(this, function()
 	{
-		outline.suspended = true;
-		outline.outline.view.clear();
+		outline.setSuspended(true);
 	}));
 	
 	this.window.addListener(mxEvent.NORMALIZE, mxUtils.bind(this, function()
 	{
-		outline.suspended = false;
-		outline.outline.view.revalidate();
-		outline.update();
+		outline.setSuspended(false);
 	}));
 			
 	this.window.addListener(mxEvent.MINIMIZE, mxUtils.bind(this, function()
 	{
-		outline.suspended = true;
-		outline.outline.view.clear();
+		outline.setSuspended(true);
 	}));
-
-	var outlineCreateGraph = outline.createGraph;
-	outline.createGraph = function(container)
-	{
-		var g = outlineCreateGraph.apply(this, arguments);
-		g.cellRenderer.minSvgStrokeWidth = 0.5;
-		g.gridEnabled = false;
-		g.pageScale = graph.pageScale;
-		g.pageFormat = graph.pageFormat;
-		g.background = (graph.background == null || graph.background == mxConstants.NONE) ?
-			graph.defaultPageBackgroundColor : graph.background;
-		g.pageVisible = graph.pageVisible;
-		g.defaultPageBackgroundColor = graph.defaultPageBackgroundColor;
-		g.defaultPageBorderColor = graph.defaultPageBorderColor;
-
-		return g;
-	};
-	
-	function update()
-	{
-		outline.outline.pageScale = graph.pageScale;
-		outline.outline.pageFormat = graph.pageFormat;
-		outline.outline.pageVisible = graph.pageVisible;
-		outline.outline.background = (graph.background == null || graph.background == mxConstants.NONE) ?
-			graph.defaultPageBackgroundColor : graph.background;;
-		outline.outline.defaultPageBackgroundColor = graph.defaultPageBackgroundColor;
-		outline.outline.defaultPageBorderColor = graph.defaultPageBorderColor;
-
-		if (graph.view.backgroundPageShape != null && outline.outline.view.backgroundPageShape != null)
-		{
-			outline.outline.view.backgroundPageShape.fill = graph.view.backgroundPageShape.fill;
-		}
-		
-		outline.outline.refresh();
-	};
 
 	outline.init(div);
 
-	editorUi.editor.addListener('resetGraphView', update);
-	editorUi.addListener('pageFormatChanged', update);
-	editorUi.addListener('backgroundColorChanged', update);
-	editorUi.addListener('backgroundImageChanged', update);
-	editorUi.addListener('pageViewChanged', function()
+	var zoomInAction = editorUi.actions.get('zoomIn');
+	var zoomOutAction = editorUi.actions.get('zoomOut');
+	mxEvent.addMouseWheelListener(function(evt, up)
 	{
-		update();
-		outline.update(true);
-	});
-	
-	if (outline.outline.dialect == mxConstants.DIALECT_SVG)
-	{
-		var zoomInAction = editorUi.actions.get('zoomIn');
-		var zoomOutAction = editorUi.actions.get('zoomOut');
-		
-		mxEvent.addMouseWheelListener(function(evt, up)
+		var outlineWheel = false;
+		var source = mxEvent.getSource(evt);
+
+		while (source != null)
 		{
-			var outlineWheel = false;
-			var source = mxEvent.getSource(evt);
-	
-			while (source != null)
+			if (source == outline.svg)
 			{
-				if (source == outline.outline.view.canvas.ownerSVGElement)
-				{
-					outlineWheel = true;
-					break;
-				}
-	
-				source = source.parentNode;
+				outlineWheel = true;
+				break;
 			}
-	
-			if (outlineWheel)
+
+			source = source.parentNode;
+		}
+
+		if (outlineWheel)
+		{
+			if (up)
 			{
-				if (up)
-				{
-					zoomInAction.funct();
-				}
-				else
-				{
-					zoomOutAction.funct();
-				}
+				zoomInAction.funct();
 			}
-		});
-	}
-	
-	this.outline = outline;
-	this.update = update;
+			else
+			{
+				zoomOutAction.funct();
+			}
+		}
+	});
 };
 
 /**
@@ -2025,7 +2009,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	
 	var div = document.createElement('div');
 	div.style.userSelect = 'none';
-	div.style.background = (!Editor.isDarkMode()) ? 'whiteSmoke' : Dialog.backdropColor;
+	div.style.background = (!Editor.isDarkMode()) ? '#fff' : Dialog.backdropColor;
 	div.style.border = '1px solid whiteSmoke';
 	div.style.height = '100%';
 	div.style.marginBottom = '10px';
@@ -2034,7 +2018,7 @@ var LayersWindow = function(editorUi, x, y, w, h)
 	var tbarHeight = (!EditorUi.compactUi) ? '30px' : '26px';
 	
 	var listDiv = document.createElement('div')
-	listDiv.style.backgroundColor = (!Editor.isDarkMode()) ? '#dcdcdc' : Dialog.backdropColor;
+	listDiv.style.backgroundColor = (!Editor.isDarkMode()) ? '#fff' : Dialog.backdropColor;
 	listDiv.style.position = 'absolute';
 	listDiv.style.overflow = 'auto';
 	listDiv.style.left = '0px';
@@ -2527,17 +2511,22 @@ var LayersWindow = function(editorUi, x, y, w, h)
 				ldiv.style.fontWeight = (graph.isEnabled()) ? 'bold' : '';
 				selectionLayer = child;
 			}
-			else
+
+			mxEvent.addListener(ldiv, 'click', function(evt)
 			{
-				mxEvent.addListener(ldiv, 'click', function(evt)
+				if (graph.isEnabled())
 				{
-					if (graph.isEnabled())
+					graph.setDefaultParent(defaultParent);
+					graph.view.setCurrentRoot(null);
+
+					if (mxEvent.isShiftDown(evt))
 					{
-						graph.setDefaultParent(defaultParent);
-						graph.view.setCurrentRoot(null);
+						graph.setSelectionCells(child.children);	
 					}
-				});
-			}
+					
+					mxEvent.consume(evt);
+				}
+			});
 			
 			listDiv.appendChild(ldiv);
 		};

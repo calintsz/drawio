@@ -463,7 +463,7 @@ Menus.prototype.init = function()
 	})));
 	this.put('arrange', new Menu(mxUtils.bind(this, function(menu, parent)
 	{
-		this.addMenuItems(menu, ['toFront', 'toBack', '-'], parent);
+		this.addMenuItems(menu, ['toFront', 'toBack', 'bringForward', 'sendBackward', '-'], parent);
 		this.addSubmenu('direction', menu, parent);
 		this.addMenuItems(menu, ['turn', '-'], parent);
 		this.addSubmenu('align', menu, parent);
@@ -590,12 +590,13 @@ Menus.prototype.addInsertTableCellItem = function(menu, parent)
 {
 	var graph = this.editorUi.editor.graph;
 	
-	this.addInsertTableItem(menu, mxUtils.bind(this, function(evt, rows, cols)
+	this.addInsertTableItem(menu, mxUtils.bind(this, function(evt, rows, cols, title, container)
 	{
-		var table = (mxEvent.isControlDown(evt) || mxEvent.isMetaDown(evt)) ?
-			graph.createCrossFunctionalSwimlane(rows, cols) :
+		var table = (container || mxEvent.isControlDown(evt) || mxEvent.isMetaDown(evt)) ?
+			graph.createCrossFunctionalSwimlane(rows, cols, null, null,
+				(title || mxEvent.isShiftDown(evt)) ? 'Cross-Functional Flowchart' : null) :
 			graph.createTable(rows, cols, null, null,
-			(mxEvent.isShiftDown(evt)) ? 'Table' : null);
+				(title || mxEvent.isShiftDown(evt)) ? 'Table' : null);
 		var pt = (mxEvent.isAltDown(evt)) ? graph.getFreeInsertPoint() :
 			graph.getCenterInsertPoint(graph.getBoundingBoxFromGeometry([table], true));
 		var select = graph.importCells([table], pt.x, pt.y);
@@ -682,6 +683,7 @@ Menus.prototype.addInsertTableItem = function(menu, insertFn, parent)
 	
 	// Show table size dialog
 	var elt2 = menu.addItem('', null, null, parent, null, null, null, true);
+	elt2.firstChild.style.fontSize = Menus.prototype.defaultFontSize + 'px';
 	
 	function createPicker(rows, cols)
 	{
@@ -728,12 +730,57 @@ Menus.prototype.addInsertTableItem = function(menu, insertFn, parent)
 	};
 	
 	elt2.firstChild.innerHTML = '';
+	
+	var titleOption = document.createElement('input');
+	titleOption.setAttribute('id', 'geTitleOption');
+	titleOption.setAttribute('type', 'checkbox');
+	elt2.firstChild.appendChild(titleOption);
+	
+	var lbl = document.createElement('label');
+	mxUtils.write(lbl, mxResources.get('title'));
+	lbl.setAttribute('for', 'geTitleOption');
+	elt2.firstChild.appendChild(lbl);
+	
+	mxEvent.addGestureListeners(lbl, null, null, mxUtils.bind(this, function(e)
+	{
+		mxEvent.consume(e);
+	}));
+	
+	mxEvent.addGestureListeners(titleOption, null, null, mxUtils.bind(this, function(e)
+	{
+		mxEvent.consume(e);
+	}));
+	
+	mxUtils.br(elt2.firstChild);
+	
+	var containerOption = document.createElement('input');
+	containerOption.setAttribute('id', 'geContainerOption');
+	containerOption.setAttribute('type', 'checkbox');
+	elt2.firstChild.appendChild(containerOption);
+	
+	var lbl = document.createElement('label');
+	mxUtils.write(lbl, mxResources.get('container'));
+	lbl.setAttribute('for', 'geContainerOption');
+	elt2.firstChild.appendChild(lbl);
+	
+	mxEvent.addGestureListeners(lbl, null, null, mxUtils.bind(this, function(e)
+	{
+		mxEvent.consume(e);
+	}));
+	
+	mxEvent.addGestureListeners(containerOption, null, null, mxUtils.bind(this, function(e)
+	{
+		mxEvent.consume(e);
+	}));
+	
+	mxUtils.br(elt2.firstChild);
+	mxUtils.br(elt2.firstChild);
+	
 	var picker = createPicker(5, 5);
 	elt2.firstChild.appendChild(picker);
 	
 	var label = document.createElement('div');
 	label.style.padding = '4px';
-	label.style.fontSize = Menus.prototype.defaultFontSize + 'px';
 	label.innerHTML = '1x1';
 	elt2.firstChild.appendChild(label);
 	
@@ -780,13 +827,14 @@ Menus.prototype.addInsertTableItem = function(menu, insertFn, parent)
 		return selected;
 	};
 	
-	mxEvent.addGestureListeners(picker, null, null, mxUtils.bind(this, function (e)
+	mxEvent.addGestureListeners(picker, null, null, mxUtils.bind(this, function(e)
 	{
 		var selected = mouseover(e);
 		
 		if (td != null && row2 != null && selected)
 		{
-			insertFn(e, row2.sectionRowIndex + 1, td.cellIndex + 1);
+			insertFn(e, row2.sectionRowIndex + 1, td.cellIndex + 1,
+				titleOption.checked, containerOption.checked);
 			
 			// Async required to block event for elements under menu
 			window.setTimeout(mxUtils.bind(this, function()
@@ -795,6 +843,7 @@ Menus.prototype.addInsertTableItem = function(menu, insertFn, parent)
 			}), 0);
 		}
 	}));
+	
 	mxEvent.addListener(picker, 'mouseover', mouseover);
 };
 
@@ -912,7 +961,7 @@ Menus.prototype.createStyleChangeFunction = function(keys, values)
 		graph.getModel().beginUpdate();
 		try
 		{
-			var cells = graph.getSelectionCells();
+			var cells = graph.getEditableCells(graph.getSelectionCells());
 			var autoSizeCells = false;
 			
 			for (var i = 0; i < keys.length; i++)
@@ -1197,9 +1246,14 @@ Menus.prototype.addPopupMenuArrangeItems = function(menu, cell, evt)
 {
 	var graph = this.editorUi.editor.graph;
 	
-	if (!graph.isSelectionEmpty())
+	if (graph.getEditableCells(graph.getSelectionCells()).length > 0)
 	{
 		this.addMenuItems(menu, ['-', 'toFront', 'toBack'], null, evt);
+		
+		if (graph.getSelectionCount() == 1)
+		{
+			this.addMenuItems(menu, ['bringForward', 'sendBackward'], null, evt);
+		}
 	}	
 
 	if (graph.getSelectionCount() > 1)	
@@ -1207,7 +1261,8 @@ Menus.prototype.addPopupMenuArrangeItems = function(menu, cell, evt)
 		this.addMenuItems(menu, ['-', 'group'], null, evt);
 	}
 	else if (graph.getSelectionCount() == 1 && !graph.getModel().isEdge(cell) &&
-		!graph.isSwimlane(cell) && graph.getModel().getChildCount(cell) > 0)
+		!graph.isSwimlane(cell) && graph.getModel().getChildCount(cell) > 0 &&
+		graph.isCellEditable(cell))
 	{
 		this.addMenuItems(menu, ['-', 'ungroup'], null, evt);
 	}
@@ -1219,7 +1274,6 @@ Menus.prototype.addPopupMenuArrangeItems = function(menu, cell, evt)
 Menus.prototype.addPopupMenuCellItems = function(menu, cell, evt)
 {
 	var graph = this.editorUi.editor.graph;
-	cell = graph.getSelectionCell();
 	var state = graph.view.getState(cell);
 	menu.addSeparator();
 	
@@ -1267,20 +1321,30 @@ Menus.prototype.addPopupMenuCellItems = function(menu, cell, evt)
 			this.addMenuItems(menu, ['-', 'clearWaypoints'], null, evt);
 		}
 	
-		if (graph.getSelectionCount() == 1)
+		if (graph.getSelectionCount() == 1 && graph.isCellEditable(cell))
 		{
-			this.addMenuItems(menu, ['-', 'editStyle', 'editData', 'editLink'], null, evt);
-	
-			// Shows edit image action if there is an image in the style
-			if (graph.getModel().isVertex(cell) && mxUtils.getValue(state.style, mxConstants.STYLE_IMAGE, null) != null)
-			{
-				menu.addSeparator();
-				this.addMenuItem(menu, 'image', null, evt).firstChild.nextSibling.innerHTML = mxResources.get('editImage') + '...';
-			}
+			this.addPopupMenuCellEditItems(menu, cell, evt);
 		}
 	}
 };
 
+/**
+ * Creates the keyboard event handler for the current graph and history.
+ */
+Menus.prototype.addPopupMenuCellEditItems = function(menu, cell, evt, parent)
+{
+	var graph = this.editorUi.editor.graph;
+	var state = graph.view.getState(cell);
+	this.addMenuItems(menu, ['-', 'editStyle', 'editData', 'editLink'], parent, evt);
+	
+	// Shows edit image action if there is an image in the style
+	if (this.editorUi.editor.graph.getModel().isVertex(cell) && mxUtils.getValue(state.style, mxConstants.STYLE_IMAGE, null) != null)
+	{
+		menu.addSeparator();
+		this.addMenuItem(menu, 'image', parent, evt).firstChild.nextSibling.innerHTML = mxResources.get('editImage') + '...';
+	}
+};
+ 
 /**
  * Creates the keyboard event handler for the current graph and history.
  */
