@@ -9,6 +9,7 @@ function isConflict(origStat, stat)
 
 function saveFile(fileObject, data, origStat, overwrite, defEnc, reqId)
 {
+	console.log('electronFilesWorker saveFile:')
 	var retryCount = 0;
 	var backupCreated = false;
 	

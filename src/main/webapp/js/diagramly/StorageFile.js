@@ -211,6 +211,7 @@ StorageFile.getFileInfo = function(ui, title, success, error)
  */
 StorageFile.prototype.saveFile = function(title, revision, success, error)
 {
+	console.log('StorageFile.prototype.saveFile:')
 	if (!this.isEditable())
 	{
 		if (success != null)

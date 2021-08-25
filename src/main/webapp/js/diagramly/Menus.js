@@ -2118,6 +2118,7 @@
 		{
 			editorUi.actions.get('save').funct = function(exit)
 			{
+				console.log(`editorUi.actions.get('save'):`)
 				if (graph.isEditing())
 				{
 					graph.stopEditing();
@@ -2153,6 +2154,7 @@
 				
 				if (file != null && file.constructor != EmbedFile && (file.constructor != LocalFile || file.mode != null))
 				{
+					console.log('Menus saveFile():')
 					editorUi.saveFile();
 				}
 			};

@@ -1380,6 +1380,7 @@ Draw.loadPlugin(function(ui)
 	 */
 	EmbedFile.prototype.saveFile = function(title, revision, success, error, unloading, overwrite)
 	{
+		console.log('EmbedFile.prototype.saveFile:')
 		try
 		{
 			if (!this.isEditable())

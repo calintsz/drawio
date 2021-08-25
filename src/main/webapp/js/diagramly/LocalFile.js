@@ -149,6 +149,7 @@ LocalFile.prototype.getLatestVersion = function(success, error)
  */
 LocalFile.prototype.saveFile = function(title, revision, success, error, useCurrentData)
 {
+	console.log('LocalFile.prototype.saveFile:')
 	if (title != this.title)
 	{
 		this.fileHandle = null;

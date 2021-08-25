@@ -4382,6 +4382,7 @@ App.prototype.saveLibrary = function(name, images, file, mode, noSpin, noReload,
  */
 App.prototype.saveFile = function(forceDialog, success)
 {
+	console.log('App.prototype.saveFile:')
 	var file = this.getCurrentFile();
 	
 	if (file != null)
@@ -6069,6 +6070,7 @@ App.prototype.showNotification = function(notifs, lsReadFlag)
  */
 App.prototype.save = function(name, done)
 {
+	console.log('App.prototype.save:')
 	var file = this.getCurrentFile();
 	
 	if (file != null && this.spinner.spin(document.body, mxResources.get('saving')))

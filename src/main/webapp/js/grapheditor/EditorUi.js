@@ -4637,6 +4637,7 @@ EditorUi.prototype.isCompatibleString = function(data)
  */
 EditorUi.prototype.saveFile = function(forceDialog)
 {
+	console.log('EditorUi.prototype.saveFile:')
 	if (!forceDialog && this.editor.filename != null)
 	{
 		this.save(this.editor.getOrCreateFilename());
@@ -4667,6 +4668,7 @@ EditorUi.prototype.saveFile = function(forceDialog)
  */
 EditorUi.prototype.save = function(name)
 {
+	console.log('EditorUi.prototype.save:')
 	if (name != null)
 	{
 		if (this.editor.graph.isEditing())

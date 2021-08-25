@@ -1883,6 +1883,7 @@
 	{
 		try
 		{
+			console.log('EditorUi.prototype.downloadFile:')
 			ignoreSelection = (ignoreSelection != null) ? ignoreSelection : this.editor.graph.isSelectionEmpty();
 			var basename = this.getBaseFilename(!currentPage);
 			var filename = basename + '.' + format;
@@ -4270,6 +4271,7 @@
 	 */
 	EditorUi.prototype.saveCanvas = function(canvas, xml, format, ignorePageName, dpi)
 	{
+		console.log('EditorUi.prototype.saveCanvas:')
 		var ext = ((format == 'jpeg') ? 'jpg' : format);
 		var filename = this.getBaseFilename(ignorePageName) + '.' + ext;
    	    var data = this.createImageDataUri(canvas, xml, format, dpi);
@@ -4281,6 +4283,7 @@
 	 */
 	EditorUi.prototype.isLocalFileSave = function()
 	{
+		console.log('EditorUi.prototype.isLocalFileSave:')
 		return ((urlParams['save'] != 'remote' && (mxClient.IS_IE ||
 			(typeof window.Blob !== 'undefined' && typeof window.URL !== 'undefined')) &&
 			document.documentMode != 9 && document.documentMode != 8 &&
@@ -4312,6 +4315,7 @@
 	 */
 	EditorUi.prototype.doSaveLocalFile = function(data, filename, mimeType, base64Encoded, format, defaultExtension)
 	{
+		console.log('EditorUi.prototype.doSaveLocalFile:')
 		// Appends .drawio extension for XML files with no extension
 		// to avoid the browser to automatically append .xml instead
 		if (mimeType == 'text/xml' &&
@@ -4430,6 +4434,7 @@
 	 */
 	EditorUi.prototype.createEchoRequest = function(data, filename, mimeType, base64Encoded, format, base64Response)
 	{
+		console.log('EditorUi.prototype.createEchoRequest:')
 		var param = (typeof(pako) === 'undefined' || true) ? 'xml=' + encodeURIComponent(data) :
 			'data=' + encodeURIComponent(Graph.compress(data));
 		
@@ -4482,6 +4487,7 @@
 	 */
 	EditorUi.prototype.saveLocalFile = function(data, filename, mimeType, base64Encoded, format, allowBrowser, allowTab, defaultExtension)
 	{
+		console.log('EditorUi.prototype.saveLocalFile:')
 		allowBrowser = (allowBrowser != null) ? allowBrowser : false;
 		allowTab = (allowTab != null) ? allowTab : (format != 'vsdx') && (!mxClient.IS_IOS || !navigator.standalone);
 		var count = this.getServiceCount(allowBrowser);
@@ -4727,6 +4733,7 @@
 	 */
 	EditorUi.prototype.saveData = function(filename, format, data, mime, base64Encoded)
 	{
+		console.log('EditorUi.prototype.saveData:')
 		if (this.isLocalFileSave())
 		{
 			this.saveLocalFile(data, filename, mime, base64Encoded, format);
@@ -4751,6 +4758,7 @@
 	 */
 	EditorUi.prototype.saveRequest = function(filename, format, fn, data, base64Encoded, mimeType, allowTab)
 	{
+		console.log('EditorUi.prototype.saveRequest:')
 		allowTab = (allowTab != null) ? allowTab : !mxClient.IS_IOS || !navigator.standalone;
 		var count = this.getServiceCount(false);
 		
@@ -14418,6 +14426,7 @@ var CommentsWindow = function(editorUi, x, y, w, h, saveCallback)
 		
 		var saveBtn = mxUtils.button(mxResources.get('save'), function()
 		{
+			console.log('saveBtn:')
 			commentTxt.innerHTML = '';
 			comment.content = textArea.value;
 			mxUtils.write(commentTxt, comment.content);

@@ -204,11 +204,6 @@
 		})();
 
 
-		let graphNo = urlParams['graphNo'];
-		let projectNo = urlParams['projectNo'];
-		let companyNo = urlParams['companyNo'];
-
-
 		// Checks for local storage
 		var isLocalStorage = false;
 
@@ -221,6 +216,10 @@
 		var mxScriptsLoaded = false,
 			mxWinLoaded = false;
 
+		let graphNo = urlParams['graphNo'];
+		let projectNo = urlParams['projectNo'];
+		let companyNo = urlParams['companyNo'];
+		let token = urlParams['token'];
 
 		function checkAllLoaded() {
 
@@ -235,7 +234,7 @@
 					url: `${window.API_BASE_URL}/api/mxgraphs/${graphNo}?project_no=${projectNo}&company_no=${companyNo}`,
 					async: false,
 					headers: {
-						"Authorization": `Bearer ${localStorage.getItem('token')}`
+						"Authorization": `Bearer ${token}`
 					},
 					success: function (data) {
 						console.log('getXmlData data:')
