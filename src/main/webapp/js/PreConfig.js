@@ -3,7 +3,7 @@
  * Copyright (c) 2006-2020, draw.io AG
  */
 // Overrides of global vars need to be pre-loaded
-window.API_BASE_URL = `http://127.0.0.1:9000`;
+window.API_BASE_URL = `http://127.0.0.1:9000`; //! fix for each server
 window.API_GRAPH_URL = window.API_BASE_URL+'/api/mxgraphs';
 window.EXPORT_URL = 'REPLACE_WITH_YOUR_IMAGE_SERVER';
 window.PLANT_URL = 'REPLACE_WITH_YOUR_PLANTUML_SERVER';
