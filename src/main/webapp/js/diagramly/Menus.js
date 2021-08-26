@@ -473,27 +473,47 @@
 		
 		editorUi.actions.addAction('close', function()
 		{
-			var currentFile = editorUi.getCurrentFile();
-			
-			function fn()
+			// ! custom close logic
+			console.log('editorUi:',editorUi)
+			let status = editorUi.editor.getStatus()
+			if(status.toUpperCase().startsWith('LOADED'))
 			{
-				if (currentFile != null)
-				{
-					currentFile.removeDraft();
+				var currentFile = editorUi.getCurrentFile();
+				console.log('currentFile:',currentFile)
+				if(currentFile){
+					console.log('currentFile.isModified():',currentFile.isModified())
+					currentFile.setModified(false);			
+	
 				}
-				
-				editorUi.fileLoaded(null);
-			};
+				editorUi.editor.setStatus('');
+				editorUi.setCurrentFile(null);
+				console.log('2editorUi.getStatus():',editorUi.editor.getStatus())
+					
+				window.close();
+			}else{
+				window.close();
+			}
 			
-			if (currentFile != null && currentFile.isModified())
-			{
-				editorUi.confirm(mxResources.get('allChangesLost'), null, fn,
-					mxResources.get('cancel'), mxResources.get('discardChanges'));
-			}
-			else
-			{
-				fn();
-			}
+			
+			// function fn()
+			// {
+			// 	if (currentFile != null)
+			// 	{
+			// 		currentFile.removeDraft();
+			// 	}
+				
+			// 	editorUi.fileLoaded(null);
+			// };
+			
+			// if (currentFile != null && currentFile.isModified())
+			// {
+			// 	editorUi.confirm(mxResources.get('allChangesLost'), null, fn,
+			// 		mxResources.get('cancel'), mxResources.get('discardChanges'));
+			// }
+			// else
+			// {
+			// 	fn();
+			// }
 		});
 		
 		editorUi.actions.addAction('editShape...', mxUtils.bind(this, function()
@@ -3530,10 +3550,10 @@
 				this.addMenuItems(menu, ['showStartScreen'], parent);
 			}
 
-			if (urlParams['embed'] != '1')
-			{
-				this.addMenuItems(menu, ['autosave'], parent);
-			}
+			// if (urlParams['embed'] != '1')
+			// {
+			// 	this.addMenuItems(menu, ['autosave'], parent);
+			// }
 			
 			menu.addSeparator(parent);
 			
@@ -3679,10 +3699,11 @@
 				}
 				else
 				{
-					this.addMenuItems(menu, ['new'], parent);
+					// Remove New Menu 
+					// this.addMenuItems(menu, ['new'], parent);
 				}
 				
-				this.addSubmenu('openFrom', menu, parent);
+				// this.addSubmenu('openFrom', menu, parent);
 
 				if (isLocalStorage)
 				{
@@ -3708,16 +3729,20 @@
 						}
 					}
 					
-					this.addMenuItems(menu, ['-', 'save', 'saveAs', '-'], parent);
+					this.addMenuItems(menu, [
+						// '-', 
+						'save', 
+						// 'saveAs', 
+						'-'
+					], parent);
 					
-					if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp &&
-						editorUi.getServiceName() == 'draw.io' &&
-						!editorUi.isOfflineApp() && file != null)
-					{
-						this.addMenuItems(menu, ['share', '-'], parent);
-					}
+					// if (!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp &&
+					// 	editorUi.getServiceName() == 'draw.io' && !editorUi.isOfflineApp() && file != null)
+					// {
+					// 	this.addMenuItems(menu, ['share', '-'], parent);
+					// }
 					
-					this.addMenuItems(menu, ['rename'], parent);
+					// this.addMenuItems(menu, ['rename'], parent);
 					
 					if (editorUi.isOfflineApp())
 					{
@@ -3728,7 +3753,7 @@
 					}
 					else
 					{
-						this.addMenuItems(menu, ['makeCopy'], parent);
+						// this.addMenuItems(menu, ['makeCopy'], parent);
 						
 						if (file != null && file.constructor == OneDriveFile)
 						{
@@ -3739,8 +3764,14 @@
 				
 				menu.addSeparator(parent);
 				this.addSubmenu('importFrom', menu, parent);
+
+
 				this.addSubmenu('exportAs', menu, parent);
+
+
 				menu.addSeparator(parent);
+
+
 				this.addSubmenu('embed', menu, parent);
 				this.addSubmenu('publish', menu, parent);
 				menu.addSeparator(parent);
@@ -3752,17 +3783,16 @@
 					this.addMenuItems(menu, ['-', 'revisionHistory'], parent);
 				}
 				
-				if (file != null && editorUi.fileNode != null)
-				{
-					var filename = (file.getTitle() != null) ?
-						file.getTitle() : editorUi.defaultFilename;
+				// if (file != null && editorUi.fileNode != null)
+				// {
+				// 	var filename = (file.getTitle() != null) ?
+				// 		file.getTitle() : editorUi.defaultFilename;
 					
-					if (!/(\.html)$/i.test(filename) &&
-						!/(\.svg)$/i.test(filename))
-					{
-						this.addMenuItems(menu, ['-', 'properties']);
-					}
-				}
+				// 	if (!/(\.html)$/i.test(filename) &&	!/(\.svg)$/i.test(filename))
+				// 	{
+				// 		this.addMenuItems(menu, ['-', 'properties']);
+				// 	}
+				// }
 				
 				this.addMenuItems(menu, ['-', 'pageSetup'], parent);
 				

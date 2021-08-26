@@ -1701,7 +1701,7 @@ App.prototype.init = function()
 				
 				if (mode == App.MODE_DEVICE || mode == App.MODE_BROWSER)
 				{
-					this.showDownloadDesktopBanner();
+					// this.showDownloadDesktopBanner();
 				}
 				else if (urlParams['embed'] != '1' && this.getServiceName() == 'draw.io')
 
@@ -4460,7 +4460,7 @@ App.prototype.saveFile = function(forceDialog, success)
 			
 			var rowLimit = (serviceCount <= 4) ? 2 : (serviceCount > 6 ? 4 : 3);
 
-			// TODO save logic
+			// ! custom save logic
 
 			var xml = mxUtils.getXml(this.editor.getGraphXml());
 			// const view = this.editor.graph.getView();
@@ -4531,8 +4531,7 @@ App.prototype.saveFile = function(forceDialog, success)
 						
 				console.log('window:')
 				console.log(window)
-				file.setModified(false);
-			
+				file.setModified(false);			
 				_self.editor.setStatus('');
 				_self.setCurrentFile(null);
 				done();
@@ -6870,22 +6869,23 @@ App.prototype.updateHeader = function()
 			evt.preventDefault();
 		}));
 		
-		mxEvent.addListener(this.fname, 'click', mxUtils.bind(this, function(evt)
-		{
-			var file = this.getCurrentFile();
+		// ! remove rename event
+		// mxEvent.addListener(this.fname, 'click', mxUtils.bind(this, function(evt)
+		// {
+		// 	var file = this.getCurrentFile();
 			
-			if (file != null && file.isRenamable())
-			{
-				if (this.editor.graph.isEditing())
-				{
-					this.editor.graph.stopEditing();
-				}
+		// 	if (file != null && file.isRenamable())
+		// 	{
+		// 		if (this.editor.graph.isEditing())
+		// 		{
+		// 			this.editor.graph.stopEditing();
+		// 		}
 
-				this.actions.get('rename').funct();
-			}
+		// 		this.actions.get('rename').funct();
+		// 	}
 			
-			mxEvent.consume(evt);
-		}));
+		// 	mxEvent.consume(evt);
+		// }));
 		
 		this.fnameWrapper.appendChild(this.fname);
 		
