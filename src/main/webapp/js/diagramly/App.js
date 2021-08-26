@@ -2272,18 +2272,31 @@ App.prototype.onBeforeUnload = function()
 		if (file != null)
 		{
 			// KNOWN: Message is ignored by most browsers
+			console.log('file.constructor:',file.constructor)
+			console.log('LocalFile:',LocalFile)
+			console.log(`file.constructor == LocalFile:`,file.constructor == LocalFile)
+			console.log(`file.getHash() == '':`,file.getHash() == '')
+			console.log('file.isModified():',file.isModified())
+			console.log(`urlParams['nowarn']:`,urlParams['nowarn'])
+			console.log(`this.isDiagramEmpty():`,this.isDiagramEmpty())
+			console.log(`!urlParams['url']:`,!urlParams['url'])
+			console.log(`this.editor.isChromelessView():`,this.editor.isChromelessView())
+			console.log('!file.fileHandle:',!file.fileHandle)
 			if (file.constructor == LocalFile && file.getHash() == '' && !file.isModified() &&
-				urlParams['nowarn'] != '1' && !this.isDiagramEmpty() && urlParams['url'] == null &&
-				!this.editor.isChromelessView() && file.fileHandle == null)
+				urlParams['nowarn'] != '1' && !this.isDiagramEmpty() && !urlParams['url'] &&
+				!this.editor.isChromelessView() && !file.fileHandle)
 			{
+				console.log('ensureDataSaved:')
 				return mxResources.get('ensureDataSaved');
 			}
 			else if (file.isModified())
 			{
+				console.log('allChangesLost:')
 				return mxResources.get('allChangesLost');
 			}
 			else
 			{
+				console.log('else:')
 				file.close(true);
 			}
 		}
@@ -4382,7 +4395,8 @@ App.prototype.saveLibrary = function(name, images, file, mode, noSpin, noReload,
  */
 App.prototype.saveFile = function(forceDialog, success)
 {
-	console.log('App.prototype.saveFile:')
+	let _self = this
+	console.log('App.prototype.saveFile forceDialog, success:',forceDialog, success)
 	var file = this.getCurrentFile();
 	
 	if (file != null)
@@ -4432,6 +4446,8 @@ App.prototype.saveFile = function(forceDialog, success)
 		}
 		else
 		{
+			console.log('file handle is null:')
+
 			var filename = (file.getTitle() != null) ? file.getTitle() : this.defaultFilename;
 			var allowTab = !mxClient.IS_IOS || !navigator.standalone;
 			var prev = this.mode;
@@ -4443,103 +4459,211 @@ App.prototype.saveFile = function(forceDialog, success)
 			}
 			
 			var rowLimit = (serviceCount <= 4) ? 2 : (serviceCount > 6 ? 4 : 3);
-			
-			var dlg = new CreateDialog(this, filename, mxUtils.bind(this, function(name, mode, input)
-			{
-				if (name != null && name.length > 0)
-				{
-					// Handles special case where PDF export is detected
-					if (/(\.pdf)$/i.test(name))
-					{
-						this.confirm(mxResources.get('didYouMeanToExportToPdf'), mxUtils.bind(this, function()
-						{
-							this.hideDialog();
-							this.actions.get('exportPdf').funct();
-						}), mxUtils.bind(this, function()
-						{
-							input.value = name.split('.').slice(0, -1).join('.');
-							input.focus();
-							
-							if (mxClient.IS_GC || mxClient.IS_FF || document.documentMode >= 5)
-							{
-								input.select();
-							}
-							else
-							{
-								document.execCommand('selectAll', false, null);
-							}
-						}), mxResources.get('yes'), mxResources.get('no'));
-					}
-					else
-					{
-						this.hideDialog();
-						
-						if (prev == null && mode == App.MODE_DEVICE)
-						{
-							if (file != null && EditorUi.nativeFileSupport)
-							{
-								this.showSaveFilePicker(mxUtils.bind(this, function(fileHandle, desc)
-								{
-									file.fileHandle = fileHandle;
-									file.mode = App.MODE_DEVICE;
-									file.title = desc.name;
-									file.desc = desc;
 
-									this.setMode(App.MODE_DEVICE);
-									this.save(desc.name, done);
-								}), mxUtils.bind(this, function(e)
-								{
-									if (e.name != 'AbortError')
-									{
-										this.handleError(e);
-									}
-								}), this.createFileSystemOptions(name));
-							}
-							else
-							{
-								this.setMode(App.MODE_DEVICE);
-								this.save(name, done);
-							}
-						}
-						else if (mode == 'download')
-						{
-							var tmp = new LocalFile(this, null, name);
-							tmp.save();
-						}
-						else if (mode == '_blank')
-						{
-							window.openFile = new OpenFile(function()
-							{
-								window.openFile = null;
-							});
-							
-							// Do not use a filename to use undefined mode
-							window.openFile.setData(this.getFileData(true));
-							this.openLink(this.getUrl(window.location.pathname), null, true);
-						}
-						else if (prev != mode)
-						{
-							this.pickFolder(mode, mxUtils.bind(this, function(folderId)
-							{
-								this.createFile(name, this.getFileData(/(\.xml)$/i.test(name) ||
-									name.indexOf('.') < 0 || /(\.drawio)$/i.test(name),
-									/(\.svg)$/i.test(name), /(\.html)$/i.test(name)),
-									null, mode, done, this.mode == null, folderId);
-							}));
-						}
-						else if (mode != null)
-						{
-							this.save(name, done);
-						}
-					}
+			// TODO save logic
+
+			var xml = mxUtils.getXml(this.editor.getGraphXml());
+			// const view = this.editor.graph.getView();
+			// console.log('view:',view)
+			// let svg = view['drawPane']['ownerSVGElement']
+
+			const {scale, transparentBackground, ignoreSelection, addShadow, editable, embedImages, border, noCrop, currentPage, linkTarget, keepTheme, exportType} = {
+				scale: 1, 
+				transparentBackground: false, 
+				ignoreSelection: 				 		 					true, 
+				addShadow: false, 
+				editable:true 	 , 
+				embedImages: false		, 
+				border: 0, 
+				noCrop: true , 
+				currentPage: false, 
+				linkTarget: 'auto', 
+				keepTheme: null, 
+				exportType: 'diagram',
+			}
+
+			var bg = (transparentBackground) ? null : this.editor.graph.background;
+				
+				if (bg == mxConstants.NONE)
+				{
+					bg = null;
 				}
-			}), mxUtils.bind(this, function()
-			{
-				this.hideDialog();
-			}), mxResources.get('saveAs'), mxResources.get('download'), null, null, allowTab,
-				null, true, rowLimit, null, null, null, this.editor.fileExtensions, false);
-			this.showDialog(dlg.container, 400, (serviceCount > rowLimit) ? 390 : 270, true, true);
-			dlg.init();
+				
+				// Handles special case where background is null but transparent is false
+				if (bg == null && transparentBackground == false)
+				{
+					bg = (keepTheme) ? this.editor.graph.defaultPageBackgroundColor : '#ffffff';
+				}
+
+			var svgRoot = this.editor.graph.getSvg(bg, scale, border, noCrop,
+				null, ignoreSelection, null, null, (linkTarget == 'blank') ? '_blank' :
+				((linkTarget == 'self') ? '_top' : null), null, true, keepTheme,
+				exportType);
+
+			console.log('svgRoot:',svgRoot)
+
+			// console.log('svg:',svg)
+			let data = (new XMLSerializer()).serializeToString(svgRoot)
+
+			if (xml.length < MAX_REQUEST_SIZE)
+				{
+					$.ajax({
+						url: `${window.API_GRAPH_URL}/${graphNo}`,
+						async: false, 
+						type: 'PUT',
+						data:JSON.stringify({
+							'project_no':projectNo,
+							'company_no':companyNo,
+							'drawio_xml':encodeURIComponent(xml),
+							'drawio_svg':encodeURIComponent(data)
+						}),
+						headers: {"Authorization": `Bearer ${localStorage.getItem('token')}`,
+						"Content-Type": "application/json"},
+						// success: ,
+						// error: 
+					}).done(function (data) {
+						// alert( data);
+						console.log('getXmlData data:')
+						console.log(data)
+						let result = decodeURIComponent(data.drawio_xml)
+						// console.log(' ==> data : ', data)
+						// console.log(' ==> result : ', result)
+						
+				console.log('window:')
+				console.log(window)
+				file.setModified(false);
+			
+				_self.editor.setStatus('');
+				_self.setCurrentFile(null);
+				done();
+				window.close()
+		
+						return result;
+					}).fail(function (xhr, status, errorThrown) {
+						// alert( xhr, status, errorThrown);
+						console.log(xhr);
+						console.log(status);
+						console.log(errorThrown);
+					}).always(function(xhr, status) { 
+						
+				console.log('window:')
+				console.log(window)
+				// window.open('','_self').close();  
+						// alert( xhr, status);
+						console.log(mxResources.get('done'))				
+						console.log(xhr)				
+						console.log(status)
+						
+					 });
+					 
+				}
+				else
+				{
+					this.handleError({message: mxResources.get('drawingTooLarge')}, mxResources.get('error'), mxUtils.bind(this, function()
+					{
+						mxUtils.popup(data);
+					}));
+					return;
+				}
+
+
+			
+			// var dlg = new CreateDialog(this, filename, mxUtils.bind(this, function(name, mode, input)
+			// {
+			// 	if (name != null && name.length > 0)
+			// 	{
+			// 		// Handles special case where PDF export is detected
+			// 		if (/(\.pdf)$/i.test(name))
+			// 		{
+			// 			this.confirm(mxResources.get('didYouMeanToExportToPdf'), mxUtils.bind(this, function()
+			// 			{
+			// 				this.hideDialog();
+			// 				this.actions.get('exportPdf').funct();
+			// 			}), mxUtils.bind(this, function()
+			// 			{
+			// 				input.value = name.split('.').slice(0, -1).join('.');
+			// 				input.focus();
+							
+			// 				if (mxClient.IS_GC || mxClient.IS_FF || document.documentMode >= 5)
+			// 				{
+			// 					input.select();
+			// 				}
+			// 				else
+			// 				{
+			// 					document.execCommand('selectAll', false, null);
+			// 				}
+			// 			}), mxResources.get('yes'), mxResources.get('no'));
+			// 		}
+			// 		else
+			// 		{
+			// 			this.hideDialog();
+						
+			// 			if (prev == null && mode == App.MODE_DEVICE)
+			// 			{
+			// 				if (file != null && EditorUi.nativeFileSupport)
+			// 				{
+			// 					this.showSaveFilePicker(mxUtils.bind(this, function(fileHandle, desc)
+			// 					{
+			// 						file.fileHandle = fileHandle;
+			// 						file.mode = App.MODE_DEVICE;
+			// 						file.title = desc.name;
+			// 						file.desc = desc;
+
+			// 						this.setMode(App.MODE_DEVICE);
+			// 						this.save(desc.name, done);
+			// 					}), mxUtils.bind(this, function(e)
+			// 					{
+			// 						if (e.name != 'AbortError')
+			// 						{
+			// 							this.handleError(e);
+			// 						}
+			// 					}), this.createFileSystemOptions(name));
+			// 				}
+			// 				else
+			// 				{
+			// 					this.setMode(App.MODE_DEVICE);
+			// 					this.save(name, done);
+			// 				}
+			// 			}
+			// 			else if (mode == 'download')
+			// 			{
+			// 				var tmp = new LocalFile(this, null, name);
+			// 				tmp.save();
+			// 			}
+			// 			else if (mode == '_blank')
+			// 			{
+			// 				window.openFile = new OpenFile(function()
+			// 				{
+			// 					window.openFile = null;
+			// 				});
+							
+			// 				// Do not use a filename to use undefined mode
+			// 				window.openFile.setData(this.getFileData(true));
+			// 				this.openLink(this.getUrl(window.location.pathname), null, true);
+			// 			}
+			// 			else if (prev != mode)
+			// 			{
+			// 				this.pickFolder(mode, mxUtils.bind(this, function(folderId)
+			// 				{
+			// 					this.createFile(name, this.getFileData(/(\.xml)$/i.test(name) ||
+			// 						name.indexOf('.') < 0 || /(\.drawio)$/i.test(name),
+			// 						/(\.svg)$/i.test(name), /(\.html)$/i.test(name)),
+			// 						null, mode, done, this.mode == null, folderId);
+			// 				}));
+			// 			}
+			// 			else if (mode != null)
+			// 			{
+			// 				this.save(name, done);
+			// 			}
+			// 		}
+			// 	}
+			// }), mxUtils.bind(this, function()
+			// {
+			// 	this.hideDialog();
+			// }), mxResources.get('saveAs'), mxResources.get('download'), null, null, allowTab,
+			// 	null, true, rowLimit, null, null, null, this.editor.fileExtensions, false);
+			// this.showDialog(dlg.container, 400, (serviceCount > rowLimit) ? 390 : 270, true, true);
+			// dlg.init();
 		}
 	}
 };

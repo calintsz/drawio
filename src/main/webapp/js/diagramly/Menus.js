@@ -668,6 +668,8 @@
 				mxUtils.bind(this, function(scale, transparentBackground, ignoreSelection, addShadow, editable,
 					embedImages, border, cropImage, currentPage, linkTarget, grid, keepTheme, exportType)
 				{
+					console.log('exportSvg scale, transparentBackground, ignoreSelection, addShadow, editable, embedImages, border, cropImage, currentPage, linkTarget, grid, keepTheme, exportType:',scale, transparentBackground, ignoreSelection, addShadow, editable,
+					embedImages, border, cropImage, currentPage, linkTarget, grid, keepTheme, exportType)
 					var val = parseInt(scale);
 					
 					if (!isNaN(val) && val > 0)

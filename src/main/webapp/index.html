@@ -220,6 +220,7 @@
 		let projectNo = urlParams['projectNo'];
 		let companyNo = urlParams['companyNo'];
 		let token = urlParams['token'];
+		let fileName = urlParams['fileName']
 
 		function checkAllLoaded() {
 
@@ -231,7 +232,7 @@
 
 				$.ajax({
 					type: 'GET',
-					url: `${window.API_BASE_URL}/api/mxgraphs/${graphNo}?project_no=${projectNo}&company_no=${companyNo}`,
+					url: `${window.API_GRAPH_URL}/${graphNo}?project_no=${projectNo}&company_no=${companyNo}`,
 					async: false,
 					headers: {
 						"Authorization": `Bearer ${token}`
@@ -265,6 +266,12 @@
 						if (xml) {
 							var doc = this.mxUtils.parseXml(xml);
 							ui.editor.setGraphXml(doc.documentElement);
+							console.log('fileName:', fileName)
+							ui.editor.setFilename(fileName || 'DB File')
+							ui.editor.setStatus(this.mxUtils.htmlEntities('Loaded') + ' ' +
+								new Date())
+							ui.getCurrentFile().rename(fileName)
+							ui.updateDocumentTitle();
 						}
 					}
 				});

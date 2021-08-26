@@ -2516,13 +2516,18 @@
 	 */
 	EditorUi.prototype.fileLoaded = function(file, noDialogs)
 	{
+		console.log('EditorUi.prototype.fileLoaded:')
 		var oldFile = this.getCurrentFile();
 		this.fileLoadedError = null;
 		this.fileEditable = null;
 		this.setCurrentFile(null);
 		var result = false;
 		this.hideDialog();
-		
+
+		console.log('oldFile:',oldFile)
+		console.log('file:',file)
+		console.log('noDialogs:',noDialogs)
+				
 		if (oldFile != null)
 		{
 			EditorUi.debug('File.closed', [oldFile]);
@@ -2607,12 +2612,19 @@
 				// Handles modified state after error of loading new file
 				else if (file.isModified())
 				{
-					file.addUnsavedStatus();
-					
-					// Restores unsaved data
-					if (file.backupPatch != null)
-					{
-						file.patch([file.backupPatch]);
+					if(oldFile===null){
+						this.editor.setStatus('');
+					}
+					else{
+						console.log('addUnsavedStatus:')
+						file.addUnsavedStatus();
+						
+						// Restores unsaved data
+						if (file.backupPatch != null)
+						{
+							file.patch([file.backupPatch]);
+						}
+
 					}
 				}
 				else
@@ -4885,6 +4897,10 @@
 	EditorUi.prototype.exportSvg = function(scale, transparentBackground, ignoreSelection, addShadow,
 		editable, embedImages, border, noCrop, currentPage, linkTarget, keepTheme, exportType)
 	{
+		console.log('EditorUi.prototype.exportSvg:',scale, transparentBackground, ignoreSelection, addShadow,
+		editable, embedImages, border, noCrop, currentPage, linkTarget, keepTheme, exportType)
+		// scale, transparentBackground, ignoreSelection, addShadow, editable, embedImages, border, noCrop, currentPage, linkTarget, keepTheme, exportType
+		// 1 		false 					true 			false 		true 	false		 0 		true 		false 		auto 		null 	diagram
 		if (this.spinner.spin(document.body, mxResources.get('export')))
 		{
 			try
@@ -9093,7 +9109,8 @@
 		};
 
 		// Specifies the default filename
-		this.defaultFilename = mxResources.get('untitledDiagram');
+		this.defaultFilename = 'DB File';
+		//mxResources.get('untitledDiagram');
 
 		// Adds export for %page%, %pagenumber% and %pagecount% placeholders
 		var graphGetExportVariables = graph.getExportVariables;

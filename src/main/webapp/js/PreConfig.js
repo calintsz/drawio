@@ -4,6 +4,7 @@
  */
 // Overrides of global vars need to be pre-loaded
 window.API_BASE_URL = `http://127.0.0.1:9000`;
+window.API_GRAPH_URL = window.API_BASE_URL+'/api/mxgraphs';
 window.EXPORT_URL = 'REPLACE_WITH_YOUR_IMAGE_SERVER';
 window.PLANT_URL = 'REPLACE_WITH_YOUR_PLANTUML_SERVER';
 window.DRAWIO_BASE_URL = null; // Replace with path to base of deployment, e.g. https://www.example.com/folder
