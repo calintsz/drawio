@@ -2564,7 +2564,7 @@
 			{
 				this.fnameWrapper.style.display = 'none';
 				this.fname.innerHTML = '';
-				this.fname.setAttribute('title', mxResources.get('rename'));
+				// this.fname.setAttribute('title', mxResources.get('rename'));
 			}
 
 			this.editor.setStatus('');

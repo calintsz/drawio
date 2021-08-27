@@ -5894,52 +5894,52 @@ App.prototype.updateButtonContainer = function()
 			!mxClient.IS_CHROMEAPP && !EditorUi.isElectronApp &&
 			!this.isOfflineApp())
 		{
-			if (file != null)
-			{
-				if (this.shareButton == null)
-				{
-					this.shareButton = document.createElement('div');
-					this.shareButton.className = 'geBtn gePrimaryBtn';
-					this.shareButton.style.display = 'inline-block';
-					this.shareButton.style.backgroundColor = '#F2931E';
-					this.shareButton.style.borderColor = '#F08705';
-					this.shareButton.style.backgroundImage = 'none';
-					this.shareButton.style.padding = '2px 10px 0 10px';
-					this.shareButton.style.marginTop = '-10px';
-					this.shareButton.style.height = '28px';
-					this.shareButton.style.lineHeight = '28px';
-					this.shareButton.style.minWidth = '0px';
-					this.shareButton.style.cssFloat = 'right';
-					this.shareButton.setAttribute('title', mxResources.get('share'));
+			// if (file != null)
+			// {
+			// 	if (this.shareButton == null)
+			// 	{
+			// 		this.shareButton = document.createElement('div');
+			// 		this.shareButton.className = 'geBtn gePrimaryBtn';
+			// 		this.shareButton.style.display = 'inline-block';
+			// 		this.shareButton.style.backgroundColor = '#F2931E';
+			// 		this.shareButton.style.borderColor = '#F08705';
+			// 		this.shareButton.style.backgroundImage = 'none';
+			// 		this.shareButton.style.padding = '2px 10px 0 10px';
+			// 		this.shareButton.style.marginTop = '-10px';
+			// 		this.shareButton.style.height = '28px';
+			// 		this.shareButton.style.lineHeight = '28px';
+			// 		this.shareButton.style.minWidth = '0px';
+			// 		this.shareButton.style.cssFloat = 'right';
+			// 		this.shareButton.setAttribute('title', mxResources.get('share'));
 					
-					var icon = document.createElement('img');
-					icon.setAttribute('src', this.shareImage);
-					icon.setAttribute('align', 'absmiddle');
-					icon.style.marginRight = '4px';
-					icon.style.marginTop = '-3px';
-					this.shareButton.appendChild(icon);
+			// 		var icon = document.createElement('img');
+			// 		icon.setAttribute('src', this.shareImage);
+			// 		icon.setAttribute('align', 'absmiddle');
+			// 		icon.style.marginRight = '4px';
+			// 		icon.style.marginTop = '-3px';
+			// 		this.shareButton.appendChild(icon);
 					
-					if (!Editor.isDarkMode() && uiTheme != 'atlas')
-					{
-						this.shareButton.style.color = 'black';
-						icon.style.filter = 'invert(100%)';
-					}
+			// 		if (!Editor.isDarkMode() && uiTheme != 'atlas')
+			// 		{
+			// 			this.shareButton.style.color = 'black';
+			// 			icon.style.filter = 'invert(100%)';
+			// 		}
 					
-					mxUtils.write(this.shareButton, mxResources.get('share'));
+			// 		mxUtils.write(this.shareButton, mxResources.get('share'));
 					
-					mxEvent.addListener(this.shareButton, 'click', mxUtils.bind(this, function()
-					{
-						this.actions.get('share').funct();
-					}));
+			// 		mxEvent.addListener(this.shareButton, 'click', mxUtils.bind(this, function()
+			// 		{
+			// 			this.actions.get('share').funct();
+			// 		}));
 					
-					this.buttonContainer.appendChild(this.shareButton);
-				}
-			}
-			else if (this.shareButton != null)
-			{
-				this.shareButton.parentNode.removeChild(this.shareButton);
-				this.shareButton = null;
-			}
+			// 		this.buttonContainer.appendChild(this.shareButton);
+			// 	}
+			// }
+			// else if (this.shareButton != null)
+			// {
+			// 	this.shareButton.parentNode.removeChild(this.shareButton);
+			// 	this.shareButton = null;
+			// }
 			
 			//Fetch notifications
 			this.fetchAndShowNotification(this.mode == 'device' || this.mode == 'google'? this.mode : null);
@@ -6467,7 +6467,7 @@ App.prototype.descriptorChanged = function()
 			this.fname.innerHTML = '';
 			var filename = (file.getTitle() != null) ? file.getTitle() : this.defaultFilename;
 			mxUtils.write(this.fname, filename);
-			this.fname.setAttribute('title', filename + ' - ' + mxResources.get('rename'));
+			// this.fname.setAttribute('title', filename + ' - ' + mxResources.get('rename'));
 		}
 		
 		var graph = this.editor.graph;
@@ -6855,7 +6855,7 @@ App.prototype.updateHeader = function()
 		this.fnameWrapper.style.textOverflow = 'ellipsis';
 		
 		this.fname = document.createElement('a');
-		this.fname.setAttribute('title', mxResources.get('rename'));
+		// this.fname.setAttribute('title', mxResources.get('rename'));
 		this.fname.className = 'geItem';
 		this.fname.style.padding = '2px 8px 2px 8px';
 		this.fname.style.display = 'inline';

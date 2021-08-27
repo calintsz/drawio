@@ -828,17 +828,17 @@
 			editorUi.openLink('https://www.youtube.com/watch?v=Z0D96ZikMkc');
 		});
 		
-		editorUi.actions.addAction('forkme', function()
-		{
-			if (EditorUi.isElectronApp)
-			{
-				editorUi.openLink('https://github.com/jgraph/drawio-desktop');
-			}
-			else
-			{
-				editorUi.openLink('https://github.com/jgraph/drawio');
-			}
-		}).label = 'Fork me on GitHub...';
+		// editorUi.actions.addAction('forkme', function()
+		// {
+		// 	if (EditorUi.isElectronApp)
+		// 	{
+		// 		editorUi.openLink('https://github.com/jgraph/drawio-desktop');
+		// 	}
+		// 	else
+		// 	{
+		// 		editorUi.openLink('https://github.com/jgraph/drawio');
+		// 	}
+		// }).label = 'Fork me on GitHub...';
 		
 		editorUi.actions.addAction('downloadDesktop...', function()
 		{
@@ -1378,59 +1378,59 @@
 			else
 			{
 				// No translation for menu item since help is english only
-				var item = menu.addItem('Search:', null, null, parent, null, null, false);
-				item.style.backgroundColor = Editor.isDarkMode() ? '#505759' : 'whiteSmoke';
-				item.style.cursor = 'default';
+				// var item = menu.addItem('Search:', null, null, parent, null, null, false);
+				// item.style.backgroundColor = Editor.isDarkMode() ? '#505759' : 'whiteSmoke';
+				// item.style.cursor = 'default';
 				
-				var input = document.createElement('input');
-				input.setAttribute('type', 'text');
-				input.setAttribute('size', '25');
-				input.style.marginLeft = '8px';
+				// var input = document.createElement('input');
+				// input.setAttribute('type', 'text');
+				// input.setAttribute('size', '25');
+				// input.style.marginLeft = '8px';
 
-				mxEvent.addListener(input, 'keydown', mxUtils.bind(this, function(e)
-				{
-					var term = mxUtils.trim(input.value);
+				// mxEvent.addListener(input, 'keydown', mxUtils.bind(this, function(e)
+				// {
+				// 	var term = mxUtils.trim(input.value);
 					
-					if (e.keyCode == 13 && term.length > 0)
-					{
-						this.editorUi.openLink('https://www.google.com/search?q=site%3Adiagrams.net+inurl%3A%2Fdoc%2Ffaq%2F+' +
-							encodeURIComponent(term));
-						input.value = '';
-						EditorUi.logEvent({category: 'SEARCH-HELP', action: 'search', label: term});
+				// 	if (e.keyCode == 13 && term.length > 0)
+				// 	{
+				// 		this.editorUi.openLink('https://www.google.com/search?q=site%3Adiagrams.net+inurl%3A%2Fdoc%2Ffaq%2F+' +
+				// 			encodeURIComponent(term));
+				// 		input.value = '';
+				// 		EditorUi.logEvent({category: 'SEARCH-HELP', action: 'search', label: term});
 						
-						window.setTimeout(mxUtils.bind(this, function()
-						{
-							this.editorUi.hideCurrentMenu();
-						}), 0);
-					}
-	                else if (e.keyCode == 27)
-	                {
-	                    input.value = '';
-	                }
-				}));
+				// 		window.setTimeout(mxUtils.bind(this, function()
+				// 		{
+				// 			this.editorUi.hideCurrentMenu();
+				// 		}), 0);
+				// 	}
+	            //     else if (e.keyCode == 27)
+	            //     {
+	            //         input.value = '';
+	            //     }
+				// }));
 				
-				item.firstChild.nextSibling.appendChild(input);
+				// item.firstChild.nextSibling.appendChild(input);
 				
-				mxEvent.addGestureListeners(input, function(evt)
-				{
-					if (document.activeElement != input)
-					{
-						input.focus();
-					}
+				// mxEvent.addGestureListeners(input, function(evt)
+				// {
+				// 	if (document.activeElement != input)
+				// 	{
+				// 		input.focus();
+				// 	}
 					
-					mxEvent.consume(evt);
-				}, function(evt)
-				{
-					mxEvent.consume(evt);
-				}, function(evt)
-				{
-					mxEvent.consume(evt);
-				});
+				// 	mxEvent.consume(evt);
+				// }, function(evt)
+				// {
+				// 	mxEvent.consume(evt);
+				// }, function(evt)
+				// {
+				// 	mxEvent.consume(evt);
+				// });
 				
-				window.setTimeout(function()
-				{
-					input.focus();
-				}, 0);
+				// window.setTimeout(function()
+				// {
+				// 	input.focus();
+				// }, 0);
 
 				if (EditorUi.isElectronApp)
 				{
@@ -1441,8 +1441,11 @@
 				}
 				else
 				{
-					this.addMenuItems(menu, ['-', 'keyboardShortcuts', 'quickStart',
-						'support', '-', 'forkme', 'downloadDesktop', '-', 'about'], parent);
+					this.addMenuItems(menu, [
+						// '-', 
+					// 'keyboardShortcuts', 'quickStart',
+						// 'support', '-', 'forkme', 'downloadDesktop', '-', 
+						'about'], parent);
 				}
 			}
 			
@@ -2506,82 +2509,82 @@
 			}
 		}))).isEnabled = isGraphEnabled;
 
-		this.put('theme', new Menu(mxUtils.bind(this, function(menu, parent)
-		{
-			var theme = (urlParams['sketch'] == '1') ? 'sketch' : mxSettings.getUi();
+		// this.put('theme', new Menu(mxUtils.bind(this, function(menu, parent)
+		// {
+		// 	var theme = (urlParams['sketch'] == '1') ? 'sketch' : mxSettings.getUi();
 
-			var item = menu.addItem(mxResources.get('automatic'), null, function()
-			{
-				mxSettings.setUi('');
-				editorUi.alert(mxResources.get('restartForChangeRequired'));
-			}, parent);
+		// 	var item = menu.addItem(mxResources.get('automatic'), null, function()
+		// 	{
+		// 		mxSettings.setUi('');
+		// 		editorUi.alert(mxResources.get('restartForChangeRequired'));
+		// 	}, parent);
 			
-			if (theme != 'kennedy' && theme != 'atlas' &&
-				theme != 'dark' && theme != 'min' &&
-				theme != 'sketch')
-			{
-				menu.addCheckmark(item, Editor.checkmarkImage);
-			}
+		// 	if (theme != 'kennedy' && theme != 'atlas' &&
+		// 		theme != 'dark' && theme != 'min' &&
+		// 		theme != 'sketch')
+		// 	{
+		// 		menu.addCheckmark(item, Editor.checkmarkImage);
+		// 	}
 
-			menu.addSeparator(parent);
+		// 	menu.addSeparator(parent);
 			
-			item = menu.addItem(mxResources.get('default'), null, function()
-			{
-				mxSettings.setUi('kennedy');
-				editorUi.alert(mxResources.get('restartForChangeRequired'));
-			}, parent);
+		// 	item = menu.addItem(mxResources.get('default'), null, function()
+		// 	{
+		// 		mxSettings.setUi('kennedy');
+		// 		editorUi.alert(mxResources.get('restartForChangeRequired'));
+		// 	}, parent);
 
-			if (theme == 'kennedy')
-			{
-				menu.addCheckmark(item, Editor.checkmarkImage);
-			}
+		// 	if (theme == 'kennedy')
+		// 	{
+		// 		menu.addCheckmark(item, Editor.checkmarkImage);
+		// 	}
 
-			item = menu.addItem(mxResources.get('minimal'), null, function()
-			{
-				mxSettings.setUi('min');
-				editorUi.alert(mxResources.get('restartForChangeRequired'));
-			}, parent);
+		// 	item = menu.addItem(mxResources.get('minimal'), null, function()
+		// 	{
+		// 		mxSettings.setUi('min');
+		// 		editorUi.alert(mxResources.get('restartForChangeRequired'));
+		// 	}, parent);
 			
-			if (theme == 'min')
-			{
-				menu.addCheckmark(item, Editor.checkmarkImage);
-			}
+		// 	if (theme == 'min')
+		// 	{
+		// 		menu.addCheckmark(item, Editor.checkmarkImage);
+		// 	}
 			
-			item = menu.addItem(mxResources.get('atlas'), null, function()
-			{
-				mxSettings.setUi('atlas');
-				editorUi.alert(mxResources.get('restartForChangeRequired'));
-			}, parent);
+		// 	item = menu.addItem(mxResources.get('atlas'), null, function()
+		// 	{
+		// 		mxSettings.setUi('atlas');
+		// 		editorUi.alert(mxResources.get('restartForChangeRequired'));
+		// 	}, parent);
 			
-			if (theme == 'atlas')
-			{
-				menu.addCheckmark(item, Editor.checkmarkImage);
-			}
+		// 	if (theme == 'atlas')
+		// 	{
+		// 		menu.addCheckmark(item, Editor.checkmarkImage);
+		// 	}
 			
-			item = menu.addItem(mxResources.get('dark'), null, function()
-			{
-				mxSettings.setUi('dark');
-				editorUi.alert(mxResources.get('restartForChangeRequired'));
-			}, parent);
+		// 	item = menu.addItem(mxResources.get('dark'), null, function()
+		// 	{
+		// 		mxSettings.setUi('dark');
+		// 		editorUi.alert(mxResources.get('restartForChangeRequired'));
+		// 	}, parent);
 			
-			if (theme == 'dark')
-			{
-				menu.addCheckmark(item, Editor.checkmarkImage);
-			}
+		// 	if (theme == 'dark')
+		// 	{
+		// 		menu.addCheckmark(item, Editor.checkmarkImage);
+		// 	}
 			
-			menu.addSeparator(parent);
+		// 	menu.addSeparator(parent);
 			
-			item = menu.addItem(mxResources.get('sketch'), null, function()
-			{
-				mxSettings.setUi('sketch');
-				editorUi.alert(mxResources.get('restartForChangeRequired'));
-			}, parent);
+		// 	item = menu.addItem(mxResources.get('sketch'), null, function()
+		// 	{
+		// 		mxSettings.setUi('sketch');
+		// 		editorUi.alert(mxResources.get('restartForChangeRequired'));
+		// 	}, parent);
 			
-			if (theme == 'sketch')
-			{
-				menu.addCheckmark(item, Editor.checkmarkImage);
-			}
-		})));
+		// 	if (theme == 'sketch')
+		// 	{
+		// 		menu.addCheckmark(item, Editor.checkmarkImage);
+		// 	}
+		// })));
 
 		var renameAction = this.editorUi.actions.addAction('rename...', mxUtils.bind(this, function()
 		{
@@ -3772,11 +3775,11 @@
 				menu.addSeparator(parent);
 
 
-				this.addSubmenu('embed', menu, parent);
-				this.addSubmenu('publish', menu, parent);
-				menu.addSeparator(parent);
-				this.addSubmenu('newLibrary', menu, parent);
-				this.addSubmenu('openLibraryFrom', menu, parent);
+				// this.addSubmenu('embed', menu, parent);
+				// this.addSubmenu('publish', menu, parent);
+				// menu.addSeparator(parent);
+				// this.addSubmenu('newLibrary', menu, parent);
+				// this.addSubmenu('openLibraryFrom', menu, parent);
 				
 				if (editorUi.isRevisionHistorySupported())
 				{
